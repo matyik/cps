@@ -1,65 +1,71 @@
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import { useState } from 'react'
+import styled from 'styled-components'
+import Modal from '../components/Modal'
+import Ripple from '../components/Ripple'
+
+const ClickArea = styled.div`
+  overflow: hidden;
+  height: 320px;
+  position: relative;
+  top: 0px;
+`
 
 export default function Home() {
+  const [playing, setPlaying] = useState(false)
+  const [timer, setTimer] = useState(0)
+  const [timerSetting, setTimerSetting] = useState(10)
+  const [clicks, setClicks] = useState(0)
+  const [showModal, setShowModal] = useState(false)
+
+  const clickHandler = (e) => {
+    e.preventDefault()
+    if (!playing) {
+      setClicks(0)
+      setPlaying(true)
+      setTimer(Date.now())
+      setTimeout(() => {
+        setPlaying(false)
+        setShowModal(true)
+      }, timerSetting * 1000)
+    }
+    playing && setClicks(clicks + 1)
+  }
+
+  const closeModal = () => {
+    if (Date.now() - timer >= 500 + timerSetting * 1000) {
+      setShowModal(false)
+    }
+  }
+
   return (
-    <div className={styles.container}>
+    <>
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>cps.gg</title>
       </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+      <div className='bg-gray-900 h-screen w-screen'>
+        <h1 className='text-green-400 text-center text-5xl'>cps.gg</h1>
+        <p className='text-white text-center mt-4'>Best cps test...</p>
+        <div className='w-screen h-0.5 bg-white mt-4'></div>
+        <ClickArea
+          onClick={(e) => clickHandler(e)}
+          onContextMenu={(e) => clickHandler(e)}
+          className='bg-green-900 text-white flex justify-center items-center cursor-pointer select-none text-xl border-b-2 border-t-2'>
+          {`${Math.round((clicks / (Date.now() - timer)) * 100000) / 100} CPS`}
+          <Ripple />
+        </ClickArea>
+        <footer className='text-center text-white mt-4'>
+          Created by <a href='https://matyi.pro'>Matyi Kari</a>
+        </footer>
+        {showModal && (
+          <div className='fixed left-0 top-0 w-screen h-screen flex items-center justify-center'>
+            <Modal
+              close={closeModal}
+              cps={Math.round((clicks / timerSetting) * 100) / 100}
+            />
+          </div>
+        )}
+      </div>
+    </>
   )
 }
