@@ -55,7 +55,7 @@ export default function Home() {
           <Ripple />
         </ClickArea>
         <footer className='text-center text-white mt-4'>
-          Created by <a href='https://matyi.pro'>Matyi Kari</a>
+          Created by <a href='https://matyi.tech'>Matyi Kari</a>
         </footer>
         {showModal && (
           <div className='fixed left-0 top-0 w-screen h-screen flex items-center justify-center'>
